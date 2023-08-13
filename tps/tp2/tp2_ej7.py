@@ -47,6 +47,16 @@ num_lp, den_lp = signal.zpk2tf(z, p, k)
 num_bp, den_bp = signal.lp2bp(num_lp, den_lp, bw = b_normalizado)
 sos_bp = tf2sos_analog(num_bp, den_bp)
 pretty_print_SOS(sos_bp, mode = 'omegayq')
-analyze_sys(signal.TransferFunction(num_bp, den_bp))
+##analyze_sys(signal.TransferFunction(num_bp, den_bp))
 
 
+
+f_o = 50
+b = 10
+w_o = 2*np.pi*f_o
+q = f_o/10
+
+num_notch = [1, 0, (w_o**2)]
+den_notch = [1, (w_o/q), (w_o**2)]
+tf(num_notch, den_notch)
+analyze_sys(tf(num_notch, den_notch))
