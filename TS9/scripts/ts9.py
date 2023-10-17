@@ -90,11 +90,20 @@ gains = 10**(np.array(gains)/20)
 coef = sig.firls(numtaps, frecs, gains, fs = fs)
 
 wz, hz = sig.freqz(coef, 1.0)
+tau_iir = -np.diff(np.angle(hz))/np.diff(wz)
 
-fig, axes = plt.subplots(2, 1, figsize = (15, 15))
-axes[0].set_title('Modulo')
+fig, axes = plt.subplots(3, 1, figsize = (15, 15))
+axes[0].set_title('Modulo FIR')
 axes[0].plot(wz*fs/(2*np.pi), 20*np.log10(hz))
 axes[0].grid()
+
+axes[1].set_title('Fase IIR')
+axes[1].plot(wz*fs/(2*np.pi), np.angle(hz))
+axes[1].grid()
+
+axes[2].set_title('Fase IIR')
+#axes[2].grid(wz[0:len(wz)-1]*fs/(2*np.pi), tau_iir)
+
 #sig.remez(numtaps, bands, desired)
 #La respuesta al impulso son los propios coefcientes ya que denominador=1
 
@@ -112,12 +121,27 @@ wz_bh, hz_bh = sig.freqz(num_bh, 1.0)
 wz_hm, hz_hm = sig.freqz(num_hm, 1.0)
 wz_ka, hz_ka = sig.freqz(num_ka, 1.0)
 
-fig_fir, axes_fir = plt.subplots(2, 1, figsize = (15, 15))
-axes_fir[0].set_title('Modulo')
+fig_fir, axes_fir = plt.subplots(3, 1, figsize = (15, 15))
+axes_fir[0].set_title('Modulo FIR')
 axes_fir[0].plot(wz_bh*fs/(2*np.pi), 20*np.log10(hz_bh))
 axes_fir[0].plot(wz_hm*fs/(2*np.pi), 20*np.log10(hz_hm))
 axes_fir[0].plot(wz_ka*fs/(2*np.pi), 20*np.log10(hz_ka))
 axes_fir[0].grid()
+
+axes_fir[1].set_title('Fase FIR')
+axes_fir[1].plot(wz_bh*fs/(2*np.pi), np.angle(hz_bh))
+axes_fir[1].plot(wz_hm*fs/(2*np.pi), np.angle(hz_hm))
+axes_fir[1].plot(wz_ka*fs/(2*np.pi), np.angle(hz_ka))
+axes_fir[1].grid()
+
+juan, pedro = sig.group_delay((num_bh, 1), w=wz_bh, fs=fs)
+axes_fir[2].set_title('Tau FIR')
+axes_fir[2].plot(juan*fs/(2*np.pi), pedro)
+axes_fir[2].set_ylim(2450, 2550)
+#axes_fir[2].plot(wz_hm*fs/(2*np.pi), np.angle(hz_hm))
+#axes_fir[2].plot(wz_ka*fs/(2*np.pi), np.angle(hz_ka))
+axes_fir[2].grid()
+
 #axes_fir[0].set_ylim([-40, 1])
 
 ############################################### PARTE 2 ##############################
